@@ -1,0 +1,64 @@
+mport java.util.Scanner;
+
+public class App {
+
+    @SuppressWarnings("resource")
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Escolha o número de dimensões do vetor (2 para 2D, 3 para 3D): ");
+        int dim = scanner.nextInt();
+        if (dim != 2 && dim != 3) {
+            System.out.println("Apenas vetores de 2D ou 3D são suportados.");
+            return;
+        }
+
+        float[] elements = new float[dim];
+        for (int i = 0; i < dim; i++) {
+            System.out.println("Digite o valor para o elemento " + (i + 1) + ": ");
+            elements[i] = scanner.nextFloat();
+        }
+
+        Vector vetor = new Vector(dim, elements);
+
+        System.out.println("\nEscolha a operação:");
+        System.out.println("1 - Translação 2D");
+        System.out.println("2 - Translação 3D");
+        System.out.println("3 - Rotação 2D");
+        System.out.println("4 - Rotação 3D (eixo X)");
+        System.out.println("5 - Rotação 3D (eixo Y)");
+        System.out.println("6 - Rotação 3D (eixo Z)");
+        System.out.println("7 - Reflexão em torno do eixo X (2D)");
+        System.out.println("8 - Reflexão em torno do eixo Y (2D)");
+        System.out.println("9 - Reflexão em torno do eixo X (3D)");
+        System.out.println("10 - Reflexão em torno do eixo Y (3D)");
+        System.out.println("11 - Reflexão em torno do eixo Z (3D)");
+        System.out.println("12 - Projeção no eixo X (2D)");
+        System.out.println("13 - Projeção no eixo Y (2D)");
+        System.out.println("14 - Projeção no eixo X (3D)");
+        System.out.println("15 - Projeção no eixo Y (3D)");
+        System.out.println("16 - Projeção no eixo Z (3D)");
+        System.out.println("17 - Cisalhamento 2D");
+
+        int escolha = scanner.nextInt();
+
+        switch (escolha) {
+            // Demais cases permanecem iguais, exceto:
+            case 17: // Cisalhamento 2D
+                if (dim != 2) {
+                    System.out.println("Operação válida apenas para vetores 2D.");
+                    break;
+                }
+                System.out.println("Digite o valor de cisalhamento kx: ");
+                float kx = scanner.nextFloat();
+                System.out.println("Digite o valor de cisalhamento ky: ");
+                float ky = scanner.nextFloat();
+                System.out.println("Resultado: " + LinearTransformation.cisalhamento2D(vetor, kx, ky));
+                break;
+
+            default:
+                System.out.println("Escolha inválida.");
+                break;
+        }
+    }
+}
