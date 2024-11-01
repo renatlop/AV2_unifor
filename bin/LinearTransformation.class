@@ -1,57 +1,188 @@
-public class LinearAlgebra {
+public class LinearTransformation {
 
-    // Método para transpor uma matriz
-    public static Matrix transpose(Matrix matriz) {
-        Matrix matrizTransposta = new Matrix(matriz.getCols(), matriz.getRows());
-        for (int linha = 0; linha < matriz.getRows(); linha++) {
-            for (int coluna = 0; coluna < matriz.getCols(); coluna++) {
-                matrizTransposta.set(coluna, linha, matriz.get(linha, coluna));
-            }
+    public static Vector translation2D(Vector vetor, float dx, float dy) {
+        if (vetor.getColumns() != 2) {
+            throw new IllegalArgumentException("O vetor deve ser bidimensional.");
         }
-        return matrizTransposta;
+        float[] elements = new float[]{vetor.get(0) + dx, vetor.get(1) + dy};
+        Vector transformed = new Vector(2, elements);
+
+        System.out.println("Vetor original: " + vetor);
+        System.out.println("Vetor transformado: " + transformed);
+
+        return transformed;
     }
 
-    // Método para transpor um vetor
-    public static Vector transpose(Vector vetor) {
-        if (vetor.getRows() == 1) {
-            Vector transposto = new Vector(vetor.getColumns(), 1);
-            for (int i = 0; i < vetor.getColumns(); i++) {
-                transposto.set(i, vetor.get(i));
-            }
-            return transposto;
-        } else {
-            Vector transposto = new Vector(1, vetor.getRows());
-            for (int i = 0; i < vetor.getRows(); i++) {
-                transposto.set(i, vetor.get(i));
-            }
-            return transposto;
+    public static Vector translation3D(Vector vetor, float dx, float dy, float dz) {
+        if (vetor.getColumns() != 3) {
+            throw new IllegalArgumentException("O vetor deve ser tridimensional.");
         }
+
+        float[] elements = new float[]{vetor.get(0) + dx, vetor.get(1) + dy, vetor.get(2) + dz};
+        Vector transformed = new Vector(3, elements);
+
+        System.out.println("Vetor original: " + vetor);
+        System.out.println("Vetor transformado: " + transformed);
+
+        return transformed;
     }
 
-    // Método para somar duas matrizes
-    public static Matrix sum(Matrix matriz1, Matrix matriz2) {
-        if (matriz1.getCols() != matriz2.getCols() || matriz1.getRows() != matriz2.getRows()) {
-            throw new IllegalArgumentException("As matrizes devem ter o mesmo número de linhas e colunas.");
+    public static Vector rotation2d(Vector vetor, float angle) {
+        if (vetor.getColumns() != 2) {
+            throw new IllegalArgumentException("O vetor deve ser bidimensional.");
         }
-        Matrix somada = new Matrix(matriz1.getRows(), matriz2.getCols());
-        for (int linha = 0; linha < matriz1.getRows(); linha++) {
-            for (int coluna = 0; coluna < matriz1.getCols(); coluna++) {
-                float value = matriz1.get(linha, coluna) + matriz2.get(linha, coluna);
-                somada.set(linha, coluna, value);
-            }
-        }
-        return somada;
+
+        float radiano = (float) Math.toRadians(angle);
+        Matrix rotationMatrix = new Matrix(2, 2);
+        rotationMatrix.set(0, 0, (float) Math.cos(radiano));
+        rotationMatrix.set(0, 1, (float) -Math.sin(radiano));
+        rotationMatrix.set(1, 0, (float) Math.sin(radiano));
+        rotationMatrix.set(1, 1, (float) Math.cos(radiano));
+
+        return LinearAlgebra.MatrixDotVector(rotationMatrix, vetor);
     }
 
-    // Método para somar dois vetores
-    public static Vector sum(Vector vetor1, Vector vetor2) {
-        if (vetor1.getRows() != vetor2.getRows() || vetor1.getColumns() != vetor2.getColumns()) {
-            throw new IllegalArgumentException("Os vetores devem ter o mesmo número de linhas e colunas.");
+    public static Vector rotation3dx(Vector vetor, float angle) {
+        if (vetor.getColumns() != 3) {
+            throw new IllegalArgumentException("O vetor deve ser tridimensional.");
         }
-        Vector somada = new Vector(vetor1.getRows(), vetor1.getColumns());
-        for (int i = 0; i < vetor1.getRows(); i++) {
-            float value = vetor1.get(i) + vetor2.get(i);
-            somada.set(i, value);
-        }
-        return somada;
+
+        float radiano = (float) Math.toRadians(angle);
+        Vector transformed = new Vector(3);
+        transformed.set(0, vetor.get(0));
+        transformed.set(1, (float) (vetor.get(1) * Math.cos(radiano) - vetor.get(2) * Math.sin(radiano)));
+        transformed.set(2, (float) (vetor.get(1) * Math.sin(radiano) + vetor.get(2) * Math.cos(radiano)));
+
+        return transformed;
     }
+
+    public static Vector rotation3dy(Vector vetor, float angle) {
+        if (vetor.getColumns() != 3) {
+            throw new IllegalArgumentException("O vetor deve ser tridimensional.");
+        }
+        angle = (float) Math.toRadians(angle);
+        Vector transformed = new Vector(3);
+        transformed.set(0, (float) (vetor.get(0) * Math.cos(angle) + vetor.get(2) * Math.sin(angle)));
+        transformed.set(1, vetor.get(1));
+        transformed.set(2, (float) (-vetor.get(0) * Math.sin(angle) + vetor.get(2) * Math.cos(angle)));
+
+        return transformed;
+    }
+
+    public static Vector rotation3dz(Vector vetor, float angle) {
+        if (vetor.getColumns() != 3) {
+            throw new IllegalArgumentException("O vetor deve ser tridimensional.");
+        }
+        angle = (float) Math.toRadians(angle);
+        Vector transformed = new Vector(3);
+        transformed.set(0, (float) (vetor.get(0) * Math.cos(angle) - vetor.get(1) * Math.sin(angle)));
+        transformed.set(1, (float) (vetor.get(0) * Math.sin(angle) + vetor.get(1) * Math.cos(angle)));
+        transformed.set(2, vetor.get(2));
+
+        return transformed;
+    }
+
+    public static Vector reflection2dx(Vector vetor) {
+        if (vetor.getColumns() != 2) {
+            throw new IllegalArgumentException("O vetor deve ser bidimensional.");
+        }
+        Vector transformed = new Vector(2);
+        transformed.set(0, vetor.get(0));
+        transformed.set(1, -vetor.get(1));
+
+        return transformed;
+    }
+
+    public static Vector reflection2dy(Vector vetor) {
+        if (vetor.getColumns() != 2) {
+            throw new IllegalArgumentException("O vetor deve ser bidimensional.");
+        }
+        Vector transformed = new Vector(2);
+        transformed.set(0, -vetor.get(0));
+        transformed.set(1, vetor.get(1));
+
+        return transformed;
+    }
+
+    // Correções das mensagens de erro de dimensão na reflexão 3D
+    public static Vector reflection3dx(Vector vetor) {
+        if (vetor.getColumns() != 3) {
+            throw new IllegalArgumentException("O vetor deve ser tridimensional.");
+        }
+        Vector transformed = new Vector(3);
+        transformed.set(0, vetor.get(0));
+        transformed.set(1, -vetor.get(1));
+        transformed.set(2, -vetor.get(2));
+        return transformed;
+    }
+
+    public static Vector reflection3dy(Vector vetor) {
+        if (vetor.getColumns() != 3) {
+            throw new IllegalArgumentException("O vetor deve ser tridimensional.");
+        }
+        Vector transformed = new Vector(3);
+        transformed.set(0, -vetor.get(0));
+        transformed.set(1, vetor.get(1));
+        transformed.set(2, -vetor.get(2));
+        return transformed;
+    }
+
+    public static Vector reflection3dz(Vector vetor) {
+        if (vetor.getColumns() != 3) {
+            throw new IllegalArgumentException("O vetor deve ser tridimensional.");
+        }
+        Vector transformed = new Vector(3);
+        transformed.set(0, -vetor.get(0));
+        transformed.set(1, -vetor.get(1));
+        transformed.set(2, vetor.get(2));
+        return transformed;
+    }
+
+    // Correção de mensagem de erro nas projeções 3D
+    public static Vector projection3dx(Vector vetor) {
+        if (vetor.getColumns() != 3) {
+            throw new IllegalArgumentException("O vetor deve ser tridimensional.");
+        }
+        Vector transformed = new Vector(3);
+        transformed.set(0, vetor.get(0));
+        transformed.set(1, 0);
+        transformed.set(2, 0);
+
+        return transformed;
+    }
+
+    public static Vector projection3dy(Vector vetor) {
+        if (vetor.getColumns() != 3) {
+            throw new IllegalArgumentException("O vetor deve ser tridimensional.");
+        }
+
+        Vector transformed = new Vector(3);
+        transformed.set(0, 0);
+        transformed.set(1, vetor.get(1));
+        transformed.set(2, 0);
+        return transformed;
+    }
+
+    public static Vector projection3dz(Vector vetor) {
+        if (vetor.getColumns() != 3) {
+            throw new IllegalArgumentException("O vetor deve ser tridimensional.");
+        }
+
+        Vector transformed = new Vector(3);
+        transformed.set(0, 0);
+        transformed.set(1, 0);
+        transformed.set(2, vetor.get(2));
+        return transformed;
+    }
+
+    public static Vector cisalhamento2D(Vector vetor, float kx, float ky) {
+        if (vetor.getColumns() != 2) {
+            throw new IllegalArgumentException("O vetor deve ser bidimensional.");
+        }
+        Vector cisalhado = new Vector(2);
+        cisalhado.set(0, vetor.get(0) + kx * vetor.get(1));
+        cisalhado.set(1, vetor.get(1) + ky * vetor.get(0));
+
+        return cisalhado;
+    }
+}
