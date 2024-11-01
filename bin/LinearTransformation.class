@@ -1,0 +1,57 @@
+public class LinearAlgebra {
+
+    // Método para transpor uma matriz
+    public static Matrix transpose(Matrix matriz) {
+        Matrix matrizTransposta = new Matrix(matriz.getCols(), matriz.getRows());
+        for (int linha = 0; linha < matriz.getRows(); linha++) {
+            for (int coluna = 0; coluna < matriz.getCols(); coluna++) {
+                matrizTransposta.set(coluna, linha, matriz.get(linha, coluna));
+            }
+        }
+        return matrizTransposta;
+    }
+
+    // Método para transpor um vetor
+    public static Vector transpose(Vector vetor) {
+        if (vetor.getRows() == 1) {
+            Vector transposto = new Vector(vetor.getColumns(), 1);
+            for (int i = 0; i < vetor.getColumns(); i++) {
+                transposto.set(i, vetor.get(i));
+            }
+            return transposto;
+        } else {
+            Vector transposto = new Vector(1, vetor.getRows());
+            for (int i = 0; i < vetor.getRows(); i++) {
+                transposto.set(i, vetor.get(i));
+            }
+            return transposto;
+        }
+    }
+
+    // Método para somar duas matrizes
+    public static Matrix sum(Matrix matriz1, Matrix matriz2) {
+        if (matriz1.getCols() != matriz2.getCols() || matriz1.getRows() != matriz2.getRows()) {
+            throw new IllegalArgumentException("As matrizes devem ter o mesmo número de linhas e colunas.");
+        }
+        Matrix somada = new Matrix(matriz1.getRows(), matriz2.getCols());
+        for (int linha = 0; linha < matriz1.getRows(); linha++) {
+            for (int coluna = 0; coluna < matriz1.getCols(); coluna++) {
+                float value = matriz1.get(linha, coluna) + matriz2.get(linha, coluna);
+                somada.set(linha, coluna, value);
+            }
+        }
+        return somada;
+    }
+
+    // Método para somar dois vetores
+    public static Vector sum(Vector vetor1, Vector vetor2) {
+        if (vetor1.getRows() != vetor2.getRows() || vetor1.getColumns() != vetor2.getColumns()) {
+            throw new IllegalArgumentException("Os vetores devem ter o mesmo número de linhas e colunas.");
+        }
+        Vector somada = new Vector(vetor1.getRows(), vetor1.getColumns());
+        for (int i = 0; i < vetor1.getRows(); i++) {
+            float value = vetor1.get(i) + vetor2.get(i);
+            somada.set(i, value);
+        }
+        return somada;
+    }
